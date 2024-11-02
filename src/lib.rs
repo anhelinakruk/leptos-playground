@@ -1,5 +1,7 @@
 pub mod app;
+pub mod chart;
 pub mod error_template;
+pub mod felt_fraction;
 #[cfg(feature = "ssr")]
 pub mod fileserv;
 

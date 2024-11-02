@@ -1,7 +1,13 @@
+use std::str::FromStr;
+
+use crate::chart::*;
 use crate::error_template::{AppError, ErrorTemplate};
+use crate::felt_fraction::FeltFraction;
 use leptos::*;
+use leptos_dom::helpers::debounce;
 use leptos_meta::*;
 use leptos_router::*;
+use logging::log;
 
 #[component]
 pub fn App() -> impl IntoView {
@@ -30,6 +36,7 @@ pub fn App() -> impl IntoView {
             <main>
                 <Routes>
                     <Route path="" view=HomePage/>
+                    <Route path="fraction" view=Fraction/>
                 </Routes>
             </main>
         </Router>
@@ -39,12 +46,25 @@ pub fn App() -> impl IntoView {
 /// Renders the home page of your application.
 #[component]
 fn HomePage() -> impl IntoView {
-    // Creates a reactive value to update the button
-    let (count, set_count) = create_signal(0);
-    let on_click = move |_| set_count.update(|count| *count += 1);
+    view! {
+        // <Chart/>
+    }
+}
+
+#[component]
+fn Fraction() -> impl IntoView {
+    let (value, set_value) = create_signal(FeltFraction::zero());
+
+    let update_value = move |ev| {
+        let input_value = event_target_value(&ev);
+        set_value.set(FeltFraction::from_str(&input_value).unwrap());
+    };
 
     view! {
-        <h1>"Welcome to Leptos!"</h1>
-        <button on:click=on_click>"Click Me: " {count}</button>
+        <h1>"Fraction"</h1>
+        <input on:input=update_value />
+        // Logujemy wartość
+
+        <p>{create_memo(move |_| value.get().to_string())}</p>
     }
 }
